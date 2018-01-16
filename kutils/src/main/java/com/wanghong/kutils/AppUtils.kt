@@ -16,10 +16,43 @@
 
 package com.wanghong.kutils
 
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+
 /**
  * Created by mutter on 1/3/18.
  */
 
 object AppUtils {
 
+}
+
+/**
+ * Check if an application installed
+ * @param action the action for the intent
+ * @param category the category for the intent
+ * @return true if the application existing
+ */
+fun Context.isAppInstalled(action: String, category: String): Boolean {
+    val intent = Intent()
+    intent.action = action
+    intent.addCategory(category)
+    return packageManager.resolveActivity(intent, 0) != null
+}
+
+/**
+ * Check if an application installed
+ * @param packageName the package name (e.g com.android.vending)
+ * @return true if the application existing
+ */
+fun Context.isAppInstalled(packageName: String): Boolean {
+    try {
+        if (packageManager.getApplicationInfo(packageName, 0) != null) {
+            return true
+        }
+    } catch (e: PackageManager.NameNotFoundException) {
+        e.printStackTrace()
+    }
+    return false
 }
