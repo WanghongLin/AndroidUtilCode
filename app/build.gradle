@@ -69,7 +69,7 @@ dependencies {
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanary_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-//    implementation 'com.blankj:utilcode:1.10.0'
+//    implementation 'com.blankj:utilcode:1.11.1'
 }
 repositories {
     mavenCentral()
