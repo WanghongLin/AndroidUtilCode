@@ -2,6 +2,7 @@ plugins {
     id "tech.harmonysoft.oss.traute" version '1.0.5'
 }
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 File signPropertiesFile = rootProject.file('sign/keystore.properties')
 
@@ -66,8 +67,12 @@ dependencies {
     // LeakCanary
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanary_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 //    implementation 'com.blankj:utilcode:1.10.0'
+}
+repositories {
+    mavenCentral()
 }
 
 
