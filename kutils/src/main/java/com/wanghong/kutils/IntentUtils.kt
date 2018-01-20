@@ -54,9 +54,16 @@ class IntentUtils {
             }
             return intent
         }
+
+        fun forInstallPackage(filePath: String) : Intent {
+            return Intent(Intent.ACTION_INSTALL_PACKAGE).setData(Uri.fromFile(File(filePath)))
+        }
     }
 }
 
+/**
+ * launch this intent, check should add [Intent.FLAG_ACTIVITY_NEW_TASK] before launch
+ */
 val launchWithNewTaskCheck: Intent.(context: Context) -> Unit = {
     context ->
     if (context.packageManager.resolveActivity(this, 0) != null) {
@@ -67,7 +74,10 @@ val launchWithNewTaskCheck: Intent.(context: Context) -> Unit = {
     }
 }
 
-val launchForResultWithNewTaskCheck: Intent.(context: Context, requestCode: Int) -> Unit = {
+/**
+ * launch this intent with a request code and handle the result in [Activity.onActivityResult]
+ */
+val launchForResult: Intent.(context: Context, requestCode: Int) -> Unit = {
     context, requestCode ->
     if (context.packageManager.resolveActivity(this, 0) != null) {
         if (context is Activity) {

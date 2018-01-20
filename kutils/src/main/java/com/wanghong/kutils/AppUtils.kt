@@ -60,7 +60,8 @@ fun Context.isAppInstalled(packageName: String): Boolean {
 }
 
 /**
- * Install a package from file path
+ * Install a package from file path, need permission [android.Manifest.permission.REQUEST_INSTALL_PACKAGES]
+ * since [Build.VERSION_CODES.O]
  *
  * @param filePath the APK file path to install
  * @param authorityOfFileProvider authority of file provider
@@ -73,15 +74,27 @@ fun Context.installApp(filePath: String, authorityOfFileProvider: String) {
 }
 
 /**
- * Install a package from file path, and check the result code
+ * Install a package from file path, and check the result code<br/>
+ * Need permission since [android.Manifest.permission.REQUEST_INSTALL_PACKAGES]
  *
  * @param filePath the APK file path to install
- * @param authorityOfFileProvider authority of file provider, used by [Build.VERSION_CODES.N]
+ * @param authorityOfFileProvider authority of file provider, used since [Build.VERSION_CODES.N]
  * @param requestCode a request code with [Activity.startActivityForResult]
  *
  * @return [Unit]
  */
 fun Activity.installApp(filePath: String, authorityOfFileProvider: String, requestCode: Int) {
     IntentUtils.forInstallApp(filePath, authorityOfFileProvider, this)
-            .launchForResultWithNewTaskCheck(this, requestCode)
+            .launchForResult(this, requestCode)
+}
+
+/**
+ * Install a package by invoke the action [Intent.ACTION_INSTALL_PACKAGE]
+ *
+ * @param filePath the APK file path to install
+ * @return [Unit]
+ */
+fun Context.installPackage(filePath: String) {
+    IntentUtils.forInstallPackage(filePath)
+            .launchWithNewTaskCheck(this)
 }
