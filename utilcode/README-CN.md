@@ -2,7 +2,7 @@
 
 Gradle:
 ```groovy
-compile 'com.blankj:utilcode:1.11.1'
+compile 'com.blankj:utilcode:1.12.5'
 ```
 
 
@@ -154,7 +154,8 @@ init: 初始化
 * ### 设备相关 -> [DeviceUtils.java][device.java] -> [Demo][device.demo]
 ```
 isDeviceRooted   : 判断设备是否 rooted
-getSDKVersion    : 获取设备系统版本号
+getSDKVersionName: 获取设备系统版本号
+getSDKVersionCode: 获取设备系统版本码
 getAndroidID     : 获取设备 AndroidID
 getMacAddress    : 获取设备 MAC 地址
 getManufacturer  : 获取设备厂商
@@ -332,6 +333,7 @@ hideSoftInput                   : 动态隐藏软键盘
 toggleSoftInput                 : 切换键盘显示与否状态
 isSoftInputVisible              : 判断软键盘是否可见
 registerSoftInputChangedListener: 注册软键盘改变监听器
+fixSoftInputLeaks               : 修复软键盘内存泄漏
 clickBlankArea2HideSoftInput    : 点击屏幕空白区域隐藏软键盘
 ```
 
@@ -428,6 +430,15 @@ getAllSMS          : 获取手机短信并保存到 xml 中
 getForegroundProcessName  : 获取前台线程包名
 killAllBackgroundProcesses: 杀死所有的后台服务进程
 killBackgroundProcesses   : 杀死后台服务进程
+```
+
+* ### 反射相关 -> [ReflectUtils.java][reflect.java] -> [Test][reflect.test]
+```
+reflect    : 设置要反射的类
+newInstance: 实例化反射对象
+field      : 设置反射的字段
+method     : 设置反射的方法
+get        : 获取反射想要获取的
 ```
 
 * ### 正则相关 -> [RegexUtils.java][regex.java] -> [Test][regex.test]
@@ -635,6 +646,7 @@ cancel         : 取消吐司显示
 
 * ### 压缩相关 -> [ZipUtils.java][zip.java] -> [Test][zip.test]
 ```
+zipFiles          : 批量压缩文件
 zipFile           : 压缩文件
 unzipFile         : 解压文件
 unzipFileByKeyword: 解压带有关键字的文件
@@ -712,6 +724,9 @@ getComments       : 获取压缩文件中的注释链表
 
 [process.java]: https://github.com/Blankj/AndroidUtilCode/blob/master/utilcode/src/main/java/com/blankj/utilcode/util/ProcessUtils.java
 [process.demo]: https://github.com/Blankj/AndroidUtilCode/blob/master/app/src/main/java/com/blankj/androidutilcode/feature/core/process/ProcessActivity.java
+
+[reflect.java]: https://github.com/Blankj/AndroidUtilCode/blob/master/utilcode/src/main/java/com/blankj/utilcode/util/ReflectUtils.java
+[reflect.test]: https://github.com/Blankj/AndroidUtilCode/blob/master/utilcode/src/test/java/com/blankj/utilcode/util/reflect/ReflectUtilsTest.java
 
 [regex.java]: https://github.com/Blankj/AndroidUtilCode/blob/master/utilcode/src/main/java/com/blankj/utilcode/util/RegexUtils.java
 [regex.test]: https://github.com/Blankj/AndroidUtilCode/blob/master/utilcode/src/test/java/com/blankj/utilcode/util/RegexUtilsTest.java
