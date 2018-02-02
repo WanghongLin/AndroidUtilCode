@@ -55,6 +55,12 @@ class IntentUtils {
             return intent
         }
 
+        fun forUninstallApp(packageName: String): Intent {
+            return Intent(Intent.ACTION_DELETE).apply {
+                data = Uri.parse("package:$packageName")
+            }
+        }
+
         fun forInstallPackage(filePath: String) : Intent {
             return Intent(Intent.ACTION_INSTALL_PACKAGE).setData(Uri.fromFile(File(filePath)))
         }

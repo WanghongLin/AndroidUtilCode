@@ -98,3 +98,61 @@ fun Context.installPackage(filePath: String) {
     IntentUtils.forInstallPackage(filePath)
             .launchWithNewTaskCheck(this)
 }
+
+/**
+ * Install application with `pm` command
+ *
+ * @param filePath the full path of the apk file
+ *
+ * @return true if successfully install else false
+ */
+fun installAppSilently(filePath: String): Boolean {
+    if (filePath.isFileExists()) {
+        val result = ShellUtils.exec("pm install $filePath")
+        return result.status == ShellUtils.EXEC_SUCCESS
+    }
+    return false
+}
+
+/**
+ * Uninstall application
+ * @param packageName the package name to uninstall
+ * @param requestCode if not -1, a request code to check the result inside [Activity.onActivityResult]
+ */
+fun Context.uninstallApp(packageName: String, requestCode: Int = -1) {
+    val intent = IntentUtils.forUninstallApp(packageName)
+    if (requestCode != -1) {
+        intent.launchWithNewTaskCheck(this)
+    } else {
+        intent.launchForResult(this, requestCode)
+    }
+}
+
+/**
+ * Uninstall application with <code>pm</code> command
+ *
+ * @param packageName the package name
+ * @param keepData should keep the application data with `-k` option
+ *
+ * @return true if successfully else false
+ */
+fun uninstallAppSilently(packageName: String, keepData: Boolean = false): Boolean {
+    val result = ShellUtils.exec("pm uninstall " +
+            if (keepData) "-k " else " " + packageName)
+    return result.status == ShellUtils.EXEC_SUCCESS
+}
+
+/**
+ * Launch an application
+ *
+ * @param packageName the package name
+ * @param requestCode request code for [Activity.startActivityForResult]
+ */
+fun Context.launchApp(packageName: String, requestCode: Int = -1) {
+    val intent = packageManager.getLaunchIntentForPackage(packageName)
+    if (requestCode != -1) {
+        intent.launchForResult(this, -1)
+    } else{
+        intent.launchWithNewTaskCheck(this)
+    }
+}

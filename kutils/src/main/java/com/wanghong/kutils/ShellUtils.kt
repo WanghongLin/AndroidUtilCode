@@ -28,6 +28,10 @@ import java.io.InputStreamReader
 class ShellUtils {
 
     companion object {
+        const val EXEC_SUCCESS = 0
+
+        private val SHELL_ENV_CACHE = mutableMapOf<String, String>()
+
         private val LINE_SEPARATOR = System.getProperty("line.separator")
 
         private fun InputStream.toReadableString() : String {
@@ -41,6 +45,15 @@ class ShellUtils {
             return string.toString()
         }
 
+        /**
+         * execute shell command
+         *
+         * @param cmd the command to execute
+         * @param needStdout collect the stand out to the returning result
+         * @param needStderr collect the stand err to the returning result
+         *
+         * @return [ShellExecResult] contain a status code and stdout/stderr
+         */
         fun exec(cmd: String, needStdout: Boolean = false, needStderr: Boolean = false): ShellExecResult {
             val process = Runtime.getRuntime().exec("/system/bin/sh" + LINE_SEPARATOR)
             with(process.outputStream) {
@@ -53,6 +66,30 @@ class ShellUtils {
             return ShellExecResult(process.waitFor(),
                     if (needStdout) process.inputStream.toReadableString() else "",
                     if (needStderr) process.errorStream.toReadableString() else "")
+        }
+
+        /**
+         * Get shell variable value in shell environment
+         *
+         * @param envName environment name, e.g USER
+         * @return the value
+         */
+        fun shellEnvironment(envName: String): String? {
+            if (SHELL_ENV_CACHE.isEmpty()) {
+                val result = exec("set", true, true)
+                result.stdout.split("\n").filter { it ->
+                    it.isNotEmpty()
+                }.forEach {
+                    val firstEqual = it.indexOfFirst { it == '=' }
+                    if (firstEqual != -1) {
+                        val name = it.substring(0, firstEqual)
+                        val value = it.substring(firstEqual + 1)
+                        SHELL_ENV_CACHE[name] = value
+                    }
+                }
+            }
+
+            return SHELL_ENV_CACHE[envName]
         }
     }
 }
