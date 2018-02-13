@@ -21,6 +21,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import android.support.v4.content.FileProvider
 import java.io.File
 
@@ -64,11 +65,17 @@ class IntentUtils {
         fun forInstallPackage(filePath: String) : Intent {
             return Intent(Intent.ACTION_INSTALL_PACKAGE).setData(Uri.fromFile(File(filePath)))
         }
+
+        fun forAppDetailSettings(pkgName: String): Intent {
+            return Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", pkgName, null)
+            }
+        }
     }
 }
 
 /**
- * launch this intent, check should add [Intent.FLAG_ACTIVITY_NEW_TASK] before launch
+ * Launch this intent, check should add [Intent.FLAG_ACTIVITY_NEW_TASK] before launch
  */
 val launchWithNewTaskCheck: Intent.(context: Context) -> Unit = {
     context ->
@@ -81,7 +88,7 @@ val launchWithNewTaskCheck: Intent.(context: Context) -> Unit = {
 }
 
 /**
- * launch this intent with a request code and handle the result in [Activity.onActivityResult]
+ * Launch this intent with a request code and handle the result in [Activity.onActivityResult]
  */
 val launchForResult: Intent.(context: Context, requestCode: Int) -> Unit = {
     context, requestCode ->

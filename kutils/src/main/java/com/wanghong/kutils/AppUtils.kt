@@ -16,10 +16,14 @@
 
 package com.wanghong.kutils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.content.pm.Signature
+import android.graphics.drawable.Drawable
 import android.os.Build
 
 /**
@@ -155,4 +159,83 @@ fun Context.launchApp(packageName: String, requestCode: Int = -1) {
     } else{
         intent.launchWithNewTaskCheck(this)
     }
+}
+
+/**
+ * Exit the calling app
+ */
+fun Context.exitApp() {
+    KUtils.sActivityList.reversed().forEach { it ->
+        it?.finish()
+        KUtils.sActivityList.remove(it)
+    }
+    
+    System.exit(0)
+}
+
+/**
+ * Jump to app detail settings
+ *
+ * @param pkgName the package name, it's the current package if not specify
+ */
+fun Context.goToAppDetailSettings(pkgName: String = packageName) {
+    IntentUtils.forAppDetailSettings(pkgName)
+            .launchWithNewTaskCheck(this)
+}
+
+/**
+ * Get application name
+ */
+fun Context.getApplicationName(pkgName: String = packageName): String {
+    return packageManager.getApplicationInfo(pkgName, 0).loadLabel(packageManager).toString()
+}
+
+/**
+ * Get application icon
+ */
+fun Context.getApplicationIcon(pkgName: String = packageName): Drawable {
+    return packageManager.getApplicationIcon(pkgName)
+}
+
+/**
+ * Get apk path of specified package in the system
+ */
+fun Context.getApplicationPath(pkgName: String = packageName): String {
+    return packageManager.getApplicationInfo(pkgName, 0).sourceDir
+}
+
+/**
+ * Get package version name
+ */
+fun Context.getApplicationVersionName(pkgName: String = packageName): String {
+    return packageManager.getPackageInfo(pkgName, 0).versionName
+}
+
+/**
+ * Get package version code
+ */
+fun Context.getApplicationVersionCode(pkgName: String = packageName): Int {
+    return packageManager.getPackageInfo(pkgName, 0).versionCode
+}
+
+/**
+ * Check if a system application
+ */
+fun Context.isSystemApp(pkgName: String = packageName): Boolean {
+    return packageManager.getApplicationInfo(pkgName, 0).flags.and(ApplicationInfo.FLAG_SYSTEM) == ApplicationInfo.FLAG_SYSTEM
+}
+
+/**
+ * Check if this is a debuggable application
+ */
+fun Context.isDebuggableApp(pkgName: String = packageName): Boolean {
+    return packageManager.getApplicationInfo(pkgName, 0).flags.and(ApplicationInfo.FLAG_DEBUGGABLE) == ApplicationInfo.FLAG_DEBUGGABLE
+}
+
+/**
+ * Get application signature
+ */
+@SuppressLint("PackageManagerGetSignatures")
+fun Context.getApplicationSignature(pkgName: String = packageName): Array<Signature> {
+    return packageManager.getPackageInfo(pkgName, PackageManager.GET_SIGNATURES).signatures
 }
