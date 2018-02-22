@@ -23,7 +23,7 @@ import java.util.List;
  *     author: Blankj
  *     blog  : http://blankj.com
  *     time  : 2016/08/02
- *     desc  : App 相关工具类
+ *     desc  : Utils about app.
  * </pre>
  */
 public final class AppUtils {
@@ -33,11 +33,11 @@ public final class AppUtils {
     }
 
     /**
-     * 判断 App 是否安装
+     * Return whether the app is installed.
      *
-     * @param action   action
-     * @param category category
-     * @return {@code true}: 已安装<br>{@code false}: 未安装
+     * @param action   The Intent action, such as ACTION_VIEW.
+     * @param category The desired category.
+     * @return {@code true}: yes<br>{@code false}: no
      */
     public static boolean isInstallApp(final String action, final String category) {
         Intent intent = new Intent(action);
@@ -48,36 +48,38 @@ public final class AppUtils {
     }
 
     /**
-     * 判断 App 是否安装
+     * Return whether the app is installed.
      *
-     * @param packageName 包名
-     * @return {@code true}: 已安装<br>{@code false}: 未安装
+     * @param packageName The name of the package.
+     * @return {@code true}: yes<br>{@code false}: no
      */
     public static boolean isInstallApp(final String packageName) {
         return !isSpace(packageName) && IntentUtils.getLaunchAppIntent(packageName) != null;
     }
 
     /**
-     * 安装 App(支持 8.0)
-     * <p>8.0 需添加权限
+     * Install the app.
+     * <p>Target APIs greater than 25 must hold
      * {@code <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />}</p>
      *
-     * @param filePath  文件路径
-     * @param authority 7.0 及以上安装需要传入清单文件中的{@code <provider>}的 authorities 属性
-     *                  <br>参看 https://developer.android.com/reference/android/support/v4/content/FileProvider.html
+     * @param filePath  The path of file.
+     * @param authority Target APIs greater than 23 must hold the authority of a
+     *                  {@link android.support.v4.content.FileProvider} defined in a
+     *                  {@code <provider>} element in your app's manifest.
      */
     public static void installApp(final String filePath, final String authority) {
         installApp(FileUtils.getFileByPath(filePath), authority);
     }
 
     /**
-     * 安装 App（支持 8.0）
-     * <p>8.0 需添加权限
+     * Install the app.
+     * <p>Target APIs greater than 25 must hold
      * {@code <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />}</p>
      *
-     * @param file      文件
-     * @param authority 7.0 及以上安装需要传入清单文件中的{@code <provider>}的 authorities 属性
-     *                  <br>参看 https://developer.android.com/reference/android/support/v4/content/FileProvider.html
+     * @param file      The file.
+     * @param authority Target APIs greater than 23 must hold the authority of a
+     *                  {@link android.support.v4.content.FileProvider} defined in a
+     *                  {@code <provider>} element in your app's manifest.
      */
     public static void installApp(final File file, final String authority) {
         if (!FileUtils.isFileExists(file)) return;
@@ -85,15 +87,17 @@ public final class AppUtils {
     }
 
     /**
-     * 安装 App（支持 8.0）
-     * <p>8.0 需添加权限
+     * Install the app.
+     * <p>Target APIs greater than 25 must hold
      * {@code <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />}</p>
      *
-     * @param activity    activity
-     * @param filePath    文件路径
-     * @param authority   7.0 及以上安装需要传入清单文件中的{@code <provider>}的 authorities 属性
-     *                    <br>参看 https://developer.android.com/reference/android/support/v4/content/FileProvider.html
-     * @param requestCode 请求值
+     * @param activity    The activity.
+     * @param filePath    The path of file.
+     * @param authority   Target APIs greater than 23 must hold the authority of a
+     *                    {@link android.support.v4.content.FileProvider} defined in a
+     *                    {@code <provider>} element in your app's manifest.
+     * @param requestCode If >= 0, this code will be returned in
+     *                    onActivityResult() when the activity exits.
      */
     public static void installApp(final Activity activity,
                                   final String filePath,
@@ -107,11 +111,13 @@ public final class AppUtils {
      * <p>8.0 需添加权限
      * {@code <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />}</p>
      *
-     * @param activity    activity
-     * @param file        文件
-     * @param authority   7.0 及以上安装需要传入清单文件中的{@code <provider>}的 authorities 属性
-     *                    <br>参看 https://developer.android.com/reference/android/support/v4/content/FileProvider.html
-     * @param requestCode 请求值
+     * @param activity    The activity.
+     * @param file        The file.
+     * @param authority   Target APIs greater than 23 must hold the authority of a
+     *                    {@link android.support.v4.content.FileProvider} defined in a
+     *                    {@code <provider>} element in your app's manifest.
+     * @param requestCode If >= 0, this code will be returned in
+     *                    onActivityResult() when the activity exits.
      */
     public static void installApp(final Activity activity,
                                   final File file,
@@ -127,7 +133,7 @@ public final class AppUtils {
      * <p>非 root 需添加权限
      * {@code <uses-permission android:name="android.permission.INSTALL_PACKAGES" />}</p>
      *
-     * @param filePath 文件路径
+     * @param filePath The path of file.
      * @return {@code true}: 安装成功<br>{@code false}: 安装失败
      */
     public static boolean installAppSilent(final String filePath) {
@@ -160,9 +166,10 @@ public final class AppUtils {
     /**
      * 卸载 App
      *
-     * @param activity    activity
+     * @param activity    The activity.
      * @param packageName 包名
-     * @param requestCode 请求值
+     * @param requestCode If >= 0, this code will be returned in
+     *                    onActivityResult() when the activity exits.
      */
     public static void uninstallApp(final Activity activity,
                                     final String packageName,
@@ -227,9 +234,10 @@ public final class AppUtils {
     /**
      * 打开 App
      *
-     * @param activity    activity
-     * @param packageName 包名
-     * @param requestCode 请求值
+     * @param activity    The activity.
+     * @param packageName The name of the package.
+     * @param requestCode If >= 0, this code will be returned in
+     *                    onActivityResult() when the activity exits.
      */
     public static void launchApp(final Activity activity,
                                  final String packageName,
