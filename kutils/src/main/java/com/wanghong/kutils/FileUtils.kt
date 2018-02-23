@@ -29,3 +29,12 @@ class FileUtils {
 fun String.isFileExists(): Boolean {
     return File(this).exists()
 }
+
+/**
+ * Remove all the contents under this directory
+ */
+fun File.emptyDirectory() {
+    if (isDirectory) {
+        listFiles().forEach { deleteRecursively() }
+    }
+}

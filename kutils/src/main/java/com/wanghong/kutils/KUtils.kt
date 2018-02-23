@@ -73,3 +73,16 @@ object KUtils {
         }
     }
 }
+
+class OsConstants {
+    companion object {
+
+    }
+}
+
+class SysConstants {
+    companion object {
+        const val SHARED_PREFS_DIR_NAME = "shared_prefs"
+        const val DATABASE_DIR_NAME = "databases"
+    }
+}

@@ -18,13 +18,15 @@ package com.wanghong.kutils
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.content.pm.Signature
 import android.graphics.drawable.Drawable
 import android.os.Build
+import java.io.File
+import java.security.MessageDigest
 
 /**
  * Created by mutter on 1/3/18.
@@ -234,8 +236,60 @@ fun Context.isDebuggableApp(pkgName: String = packageName): Boolean {
 
 /**
  * Get application signature
+ *
+ * @param pkgName the package name
+ * @param sha1sum should output as sha1sum
+ *
+ * @return [Array] of signature if sha1sum is false, else a sha1sum string split by colon
  */
 @SuppressLint("PackageManagerGetSignatures")
-fun Context.getApplicationSignature(pkgName: String = packageName): Array<Signature> {
-    return packageManager.getPackageInfo(pkgName, PackageManager.GET_SIGNATURES).signatures
+fun Context.getApplicationSignature(pkgName: String = packageName, sha1sum: Boolean = false): Any {
+    val signature = packageManager.getPackageInfo(pkgName, PackageManager.GET_SIGNATURES).signatures
+    return if (sha1sum) {
+        MessageDigest.getInstance("SHA1")
+                .hexChecksum(signature[0].toByteArray(), null)
+                .replace(Regex("(?<=\\w{2}\\w{2})"), ":$0")
+    } else {
+        signature
+    }
+}
+
+/**
+ * Check if an app is in foreground
+ *
+ * @param pkgName the package name
+ * @return true if it's in foreground else false
+ */
+fun Context.isForegroundApp(pkgName: String = packageName): Boolean {
+    val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    return am.runningAppProcesses.find {
+        it.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+    }?.processName.equals(pkgName)
+}
+
+/**
+ * Clear all app data, including files, cache, database, shared preferences and custom directory if provided
+ *
+ * @param customDirectories provide a list of directory to clear also
+ */
+fun Context.clearAppData(vararg customDirectories: File) {
+    val appDataRoot = filesDir.absoluteFile.parent
+
+    // file
+    filesDir.emptyDirectory()
+
+    // cache
+    cacheDir.emptyDirectory()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        externalCacheDirs.forEach { it.emptyDirectory() }
+    } else {
+        externalCacheDir.emptyDirectory()
+    }
+
+    // database and shared preference
+    File(appDataRoot + File.separator + SysConstants.DATABASE_DIR_NAME).emptyDirectory()
+    File(appDataRoot + File.separator + SysConstants.SHARED_PREFS_DIR_NAME).emptyDirectory()
+
+    // custom directory
+    customDirectories.filter { it.isDirectory }.forEach { it.emptyDirectory() }
 }
