@@ -18,6 +18,7 @@ import android.util.Log;
 import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ import java.util.List;
  *     author: Blankj
  *     blog  : http://blankj.com
  *     time  : 2016/08/02
- *     desc  : Utils about app.
+ *     desc  : utils about app
  * </pre>
  */
 public final class AppUtils {
@@ -40,9 +41,8 @@ public final class AppUtils {
      * {@code <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />}</p>
      *
      * @param filePath  The path of file.
-     * @param authority Target APIs greater than 23 must hold the authority of a
-     *                  {@link android.support.v4.content.FileProvider} defined in a
-     *                  {@code <provider>} element in your app's manifest.
+     * @param authority Target APIs greater than 23 must hold the authority of a FileProvider
+     *                  defined in a {@code <provider>} element in your app's manifest.
      */
     public static void installApp(final String filePath, final String authority) {
         installApp(getFileByPath(filePath), authority);
@@ -54,9 +54,8 @@ public final class AppUtils {
      * {@code <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />}</p>
      *
      * @param file      The file.
-     * @param authority Target APIs greater than 23 must hold the authority of a
-     *                  {@link android.support.v4.content.FileProvider} defined in a
-     *                  {@code <provider>} element in your app's manifest.
+     * @param authority Target APIs greater than 23 must hold the authority of a FileProvider
+     *                  defined in a {@code <provider>} element in your app's manifest.
      */
     public static void installApp(final File file, final String authority) {
         if (!isFileExists(file)) return;
@@ -70,10 +69,9 @@ public final class AppUtils {
      *
      * @param activity    The activity.
      * @param filePath    The path of file.
-     * @param authority   Target APIs greater than 23 must hold the authority of a
-     *                    {@link android.support.v4.content.FileProvider} defined in a
-     *                    {@code <provider>} element in your app's manifest.
-     * @param requestCode If >= 0, this code will be returned in
+     * @param authority   Target APIs greater than 23 must hold the authority of a FileProvider
+     *                    defined in a {@code <provider>} element in your app's manifest.
+     * @param requestCode If &gt;= 0, this code will be returned in
      *                    onActivityResult() when the activity exits.
      */
     public static void installApp(final Activity activity,
@@ -90,10 +88,9 @@ public final class AppUtils {
      *
      * @param activity    The activity.
      * @param file        The file.
-     * @param authority   Target APIs greater than 23 must hold the authority of a
-     *                    {@link android.support.v4.content.FileProvider} defined in a
-     *                    {@code <provider>} element in your app's manifest.
-     * @param requestCode If >= 0, this code will be returned in
+     * @param authority   Target APIs greater than 23 must hold the authority of a FileProvider
+     *                    defined in a {@code <provider>} element in your app's manifest.
+     * @param requestCode If &gt;= 0, this code will be returned in
      *                    onActivityResult() when the activity exits.
      */
     public static void installApp(final Activity activity,
@@ -114,7 +111,7 @@ public final class AppUtils {
      * @return {@code true}: success<br>{@code false}: fail
      */
     public static boolean installAppSilent(final String filePath) {
-        return installAppSilent(getFileByPath(filePath));
+        return installAppSilent(getFileByPath(filePath), null);
     }
 
     /**
@@ -126,19 +123,47 @@ public final class AppUtils {
      * @return {@code true}: success<br>{@code false}: fail
      */
     public static boolean installAppSilent(final File file) {
+        return installAppSilent(file, null);
+    }
+
+
+    /**
+     * Install the app silently.
+     * <p>Without root permission must hold
+     * {@code <uses-permission android:name="android.permission.INSTALL_PACKAGES" />}</p>
+     *
+     * @param filePath The path of file.
+     * @param params   The params of installation.
+     * @return {@code true}: success<br>{@code false}: fail
+     */
+    public static boolean installAppSilent(final String filePath, final String params) {
+        return installAppSilent(getFileByPath(filePath), null);
+    }
+
+    /**
+     * Install the app silently.
+     * <p>Without root permission must hold
+     * {@code <uses-permission android:name="android.permission.INSTALL_PACKAGES" />}</p>
+     *
+     * @param file   The file.
+     * @param params The params of installation.
+     * @return {@code true}: success<br>{@code false}: fail
+     */
+    public static boolean installAppSilent(final File file, final String params) {
         if (!isFileExists(file)) return false;
         boolean isRoot = isDeviceRooted();
         String filePath = file.getAbsolutePath();
-        String command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib pm install " + filePath;
+        String command = "LD_LIBRARY_PATH=/vendor/lib*:/system/lib* pm install " +
+                (params == null ? "" : params + " ")
+                + filePath;
         ShellUtils.CommandResult commandResult = ShellUtils.execCmd(command, isRoot);
         if (commandResult.successMsg != null
                 && commandResult.successMsg.toLowerCase().contains("success")) {
             return true;
         } else {
-            command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib64 pm install " + filePath;
-            commandResult = ShellUtils.execCmd(command, isRoot, true);
-            return commandResult.successMsg != null
-                    && commandResult.successMsg.toLowerCase().contains("success");
+            Log.e("AppUtils", "installAppSilent successMsg: " + commandResult.successMsg +
+                    ", errorMsg: " + commandResult.errorMsg);
+            return false;
         }
     }
 
@@ -157,14 +182,17 @@ public final class AppUtils {
      *
      * @param activity    The activity.
      * @param packageName The name of the package.
-     * @param requestCode If >= 0, this code will be returned in
+     * @param requestCode If &gt;= 0, this code will be returned in
      *                    onActivityResult() when the activity exits.
      */
     public static void uninstallApp(final Activity activity,
                                     final String packageName,
                                     final int requestCode) {
         if (isSpace(packageName)) return;
-        activity.startActivityForResult(IntentUtils.getUninstallAppIntent(packageName), requestCode);
+        activity.startActivityForResult(
+                IntentUtils.getUninstallAppIntent(packageName),
+                requestCode
+        );
     }
 
     /**
@@ -191,7 +219,7 @@ public final class AppUtils {
     public static boolean uninstallAppSilent(final String packageName, final boolean isKeepData) {
         if (isSpace(packageName)) return false;
         boolean isRoot = isDeviceRooted();
-        String command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib pm uninstall "
+        String command = "LD_LIBRARY_PATH=/vendor/lib*:/system/lib* pm uninstall "
                 + (isKeepData ? "-k " : "")
                 + packageName;
         ShellUtils.CommandResult commandResult = ShellUtils.execCmd(command, isRoot, true);
@@ -199,12 +227,9 @@ public final class AppUtils {
                 && commandResult.successMsg.toLowerCase().contains("success")) {
             return true;
         } else {
-            command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib64 pm uninstall "
-                    + (isKeepData ? "-k " : "")
-                    + packageName;
-            commandResult = ShellUtils.execCmd(command, isRoot, true);
-            return commandResult.successMsg != null
-                    && commandResult.successMsg.toLowerCase().contains("success");
+            Log.e("AppUtils", "uninstallAppSilent successMsg: " + commandResult.successMsg +
+                    ", errorMsg: " + commandResult.errorMsg);
+            return false;
         }
     }
 
@@ -308,9 +333,10 @@ public final class AppUtils {
      * @return {@code true}: yes<br>{@code false}: no
      */
     public static boolean isAppForeground() {
-        ActivityManager manager =
+        ActivityManager am =
                 (ActivityManager) Utils.getApp().getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> info = manager.getRunningAppProcesses();
+        if (am == null) return false;
+        List<ActivityManager.RunningAppProcessInfo> info = am.getRunningAppProcesses();
         if (info == null || info.size() == 0) return false;
         for (ActivityManager.RunningAppProcessInfo aInfo : info) {
             if (aInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
@@ -347,7 +373,7 @@ public final class AppUtils {
      *
      * @param activity    The activity.
      * @param packageName The name of the package.
-     * @param requestCode If >= 0, this code will be returned in
+     * @param requestCode If &gt;= 0, this code will be returned in
      *                    onActivityResult() when the activity exits.
      */
     public static void launchApp(final Activity activity,
@@ -380,7 +406,7 @@ public final class AppUtils {
      * Exit the application.
      */
     public static void exitApp() {
-        List<Activity> activityList = Utils.sActivityList;
+        List<Activity> activityList = Utils.getActivityList();
         for (int i = activityList.size() - 1; i >= 0; --i) {// remove from top
             Activity activity = activityList.get(i);
             // sActivityList remove the index activity at onActivityDestroyed
@@ -630,6 +656,80 @@ public final class AppUtils {
                 replaceAll("(?<=[0-9A-F]{2})[0-9A-F]{2}", ":$0");
     }
 
+    /**
+     * Return the application's information.
+     * <ul>
+     * <li>name of package</li>
+     * <li>icon</li>
+     * <li>name</li>
+     * <li>path of package</li>
+     * <li>version name</li>
+     * <li>version code</li>
+     * <li>is system</li>
+     * </ul>
+     *
+     * @return the application's information
+     */
+    public static AppInfo getAppInfo() {
+        return getAppInfo(Utils.getApp().getPackageName());
+    }
+
+    /**
+     * Return the application's information.
+     * <ul>
+     * <li>name of package</li>
+     * <li>icon</li>
+     * <li>name</li>
+     * <li>path of package</li>
+     * <li>version name</li>
+     * <li>version code</li>
+     * <li>is system</li>
+     * </ul>
+     *
+     * @param packageName The name of the package.
+     * @return 当前应用的 AppInfo
+     */
+    public static AppInfo getAppInfo(final String packageName) {
+        try {
+            PackageManager pm = Utils.getApp().getPackageManager();
+            PackageInfo pi = pm.getPackageInfo(packageName, 0);
+            return getBean(pm, pi);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Return the applications' information.
+     *
+     * @return the applications' information
+     */
+    public static List<AppInfo> getAppsInfo() {
+        List<AppInfo> list = new ArrayList<>();
+        PackageManager pm = Utils.getApp().getPackageManager();
+        List<PackageInfo> installedPackages = pm.getInstalledPackages(0);
+        for (PackageInfo pi : installedPackages) {
+            AppInfo ai = getBean(pm, pi);
+            if (ai == null) continue;
+            list.add(ai);
+        }
+        return list;
+    }
+
+    private static AppInfo getBean(final PackageManager pm, final PackageInfo pi) {
+        if (pm == null || pi == null) return null;
+        ApplicationInfo ai = pi.applicationInfo;
+        String packageName = pi.packageName;
+        String name = ai.loadLabel(pm).toString();
+        Drawable icon = ai.loadIcon(pm);
+        String packagePath = ai.sourceDir;
+        String versionName = pi.versionName;
+        int versionCode = pi.versionCode;
+        boolean isSystem = (ApplicationInfo.FLAG_SYSTEM & ai.flags) != 0;
+        return new AppInfo(packageName, name, icon, packagePath, versionName, versionCode, isSystem);
+    }
+
     private static boolean isFileExists(final File file) {
         return file != null && file.exists();
     }
@@ -689,5 +789,97 @@ public final class AppUtils {
             ret[j++] = HEX_DIGITS[bytes[i] & 0x0f];
         }
         return new String(ret);
+    }
+
+    /**
+     * The application's information.
+     */
+    public static class AppInfo {
+
+        private String   packageName;
+        private String   name;
+        private Drawable icon;
+        private String   packagePath;
+        private String   versionName;
+        private int      versionCode;
+        private boolean  isSystem;
+
+        public Drawable getIcon() {
+            return icon;
+        }
+
+        public void setIcon(final Drawable icon) {
+            this.icon = icon;
+        }
+
+        public boolean isSystem() {
+            return isSystem;
+        }
+
+        public void setSystem(final boolean isSystem) {
+            this.isSystem = isSystem;
+        }
+
+        public String getPackageName() {
+            return packageName;
+        }
+
+        public void setPackageName(final String packageName) {
+            this.packageName = packageName;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(final String name) {
+            this.name = name;
+        }
+
+        public String getPackagePath() {
+            return packagePath;
+        }
+
+        public void setPackagePath(final String packagePath) {
+            this.packagePath = packagePath;
+        }
+
+        public int getVersionCode() {
+            return versionCode;
+        }
+
+        public void setVersionCode(final int versionCode) {
+            this.versionCode = versionCode;
+        }
+
+        public String getVersionName() {
+            return versionName;
+        }
+
+        public void setVersionName(final String versionName) {
+            this.versionName = versionName;
+        }
+
+        public AppInfo(String packageName, String name, Drawable icon, String packagePath,
+                       String versionName, int versionCode, boolean isSystem) {
+            this.setName(name);
+            this.setIcon(icon);
+            this.setPackageName(packageName);
+            this.setPackagePath(packagePath);
+            this.setVersionName(versionName);
+            this.setVersionCode(versionCode);
+            this.setSystem(isSystem);
+        }
+
+        @Override
+        public String toString() {
+            return "pkg name: " + getPackageName() +
+                    "\napp icon: " + getIcon() +
+                    "\napp name: " + getName() +
+                    "\napp path: " + getPackagePath() +
+                    "\napp v name: " + getVersionName() +
+                    "\napp v code: " + getVersionCode() +
+                    "\nis system: " + isSystem();
+        }
     }
 }

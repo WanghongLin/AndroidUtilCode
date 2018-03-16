@@ -1,4 +1,24 @@
-* 18/02/10 完善中文版为英文版
+* 18/03/16 新增 gradle 插件来格式化 README
+* 18/03/14 修复 KeyboardUtils#getContentViewInvisibleHeight，发布 1.13.4 版本
+* 18/03/10 完善 Utils#installAppSilent 和 DeviceUtils#getMacAddress，发布 1.13.3 版本
+* 18/03/09 完善 ActivityUtils#getTopActivity
+* 18/03/08 新增反射获取栈顶 Activity 的方法，发布 1.13.2 版本
+* 18/03/07 修复 PermissionUtils 请求权限为 0 的 崩溃
+* 18/03/05 修复 Library Source does not match the bytecode for class LogUtils 问题，发布 1.13.1 版本
+* 18/03/04 完善 Javadoc 中文版为英文版，发布 1.13.0 版本
+* 18/03/04 完善 Javadoc 中文版为英文版
+* 18/03/03 完善 Javadoc 中文版为英文版
+* 18/03/02 完善 Javadoc 中文版为英文版
+* 18/03/01 完善 Javadoc 中文版为英文版
+* 18/02/28 完善 Javadoc 中文版为英文版
+* 18/02/27 完善 Javadoc 中文版为英文版
+* 18/02/26 完善 Javadoc 中文版为英文版
+* 18/02/25 完善 Javadoc 中文版为英文版
+* 18/02/24 完善 Javadoc 中文版为英文版
+* 18/02/23 完善 Javadoc 中文版为英文版
+* 18/02/22 完善 Javadoc 中文版为英文版
+* 18/02/21 完善 Javadoc 中文版为英文版
+* 18/02/10 完善 Javadoc 中文版为英文版
 * 18/02/09 完善非空转换插件 traute 的使用方式
 * 18/02/08 修复 ActivityUtils option 低版本为空的异常
 * 18/01/31 修复 default 相关的逻辑错误，发布 1.12.4，修复 ToastUtils 在 kotlin 中转义失败，发布 1.12.5

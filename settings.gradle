@@ -1,3 +1,10 @@
+<<<<<<< HEAD
 include ':app', ':kutils', ':kutilssample',
         ':utilcode',
         ':subutil'
+=======
+include ':app',
+        ':buildSrc',
+        ':subutil',
+        ':utilcode'
+>>>>>>> upstream/master

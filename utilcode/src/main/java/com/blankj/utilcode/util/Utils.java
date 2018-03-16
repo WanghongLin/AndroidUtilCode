@@ -8,9 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import java.lang.ref.WeakReference;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * <pre>
@@ -28,7 +26,7 @@ import java.util.List;
  *         \__\/                       \__\/         \__\/         \__\/
  *     blog  : http://blankj.com
  *     time  : 16/12/08
- *     desc  : Utils about initialization.
+ *     desc  : utils about initialization
  * </pre>
  */
 public final class Utils {
@@ -36,24 +34,22 @@ public final class Utils {
     @SuppressLint("StaticFieldLeak")
     private static Application sApplication;
 
-    static WeakReference<Activity> sTopActivityWeakRef;
-    static List<Activity> sActivityList = new LinkedList<>();
+    private static LinkedList<Activity> sActivityList = new LinkedList<>();
 
     private static ActivityLifecycleCallbacks mCallbacks = new ActivityLifecycleCallbacks() {
         @Override
         public void onActivityCreated(Activity activity, Bundle bundle) {
-            sActivityList.add(activity);
-            setTopActivityWeakRef(activity);
+            setTopActivity(activity);
         }
 
         @Override
         public void onActivityStarted(Activity activity) {
-            setTopActivityWeakRef(activity);
+            setTopActivity(activity);
         }
 
         @Override
         public void onActivityResumed(Activity activity) {
-            setTopActivityWeakRef(activity);
+            setTopActivity(activity);
         }
 
         @Override
@@ -88,7 +84,7 @@ public final class Utils {
      * @param context context
      */
     public static void init(@NonNull final Context context) {
-        Utils.sApplication = ((Application) context.getApplicationContext());
+        Utils.sApplication = (Application) context.getApplicationContext();
         Utils.sApplication.registerActivityLifecycleCallbacks(mCallbacks);
     }
 
@@ -102,10 +98,19 @@ public final class Utils {
         throw new NullPointerException("u should init first");
     }
 
-    private static void setTopActivityWeakRef(final Activity activity) {
+    static void setTopActivity(final Activity activity) {
         if (activity.getClass() == PermissionUtils.PermissionActivity.class) return;
-        if (sTopActivityWeakRef == null || !activity.equals(sTopActivityWeakRef.get())) {
-            sTopActivityWeakRef = new WeakReference<>(activity);
+        if (sActivityList.contains(activity)) {
+            if (!sActivityList.getLast().equals(activity)) {
+                sActivityList.remove(activity);
+                sActivityList.addLast(activity);
+            }
+        } else {
+            sActivityList.addLast(activity);
         }
+    }
+
+    public static LinkedList<Activity> getActivityList() {
+        return sActivityList;
     }
 }

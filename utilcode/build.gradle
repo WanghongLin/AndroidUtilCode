@@ -1,24 +1,14 @@
 apply plugin: 'com.android.library'
+<<<<<<< HEAD
 apply plugin: 'kotlin-android'
 apply plugin: 'jacoco'
+=======
+apply plugin: 'com.blankj.readme.core'
+>>>>>>> upstream/master
 
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
-
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
-
-    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
-    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
-    def mainSrc = "${project.projectDir}/src/main/java"
-
-    sourceDirectories = files([mainSrc])
-    classDirectories = files([debugTree])
-    executionData = fileTree(dir: "$buildDir", includes: [
-            "jacoco/testDebugUnitTest.exec",
-            "outputs/code-coverage/connected/*coverage.ec"
-    ])
+readme {
+    readmeFile file('README.md')
+    readmeCnFile file('README-CN.md')
 }
 
 android {
@@ -30,9 +20,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            testCoverageEnabled true
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -59,7 +46,11 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 apply from: "../bintrayUpload.gradle"
+<<<<<<< HEAD
 repositories {
     mavenCentral()
 }
 //gradle bintrayUpload
+=======
+//gradle bintrayUpload
+>>>>>>> upstream/master

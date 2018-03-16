@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
-File signPropertiesFile = rootProject.file('sign/keystore.properties')
+File signPropertiesFile = file('sign/keystore.properties')
 
 android {
     compileSdkVersion compile_sdk_version
@@ -18,7 +18,7 @@ android {
         properties.load(new FileInputStream(signPropertiesFile))
         signingConfigs {
             release {
-                storeFile rootProject.file(properties['keystore'])
+                storeFile file(properties['keystore'])
                 storePassword properties['storePassword']
                 keyAlias properties['keyAlias']
                 keyPassword properties['keyPassword']
@@ -57,6 +57,7 @@ dependencies {
     // LeakCanary
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanary_version"
+<<<<<<< HEAD
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 	// implementation 'com.blankj:utilcode:1.12.5'
     // implementation 'com.blankj:utilcode:1.12.5'
