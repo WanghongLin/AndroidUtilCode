@@ -1,10 +1,7 @@
 apply plugin: 'com.android.library'
-<<<<<<< HEAD
 apply plugin: 'kotlin-android'
 apply plugin: 'jacoco'
-=======
 apply plugin: 'com.blankj.readme.sub'
->>>>>>> upstream/master
 
 readme {
     readmeFile file('README.md')

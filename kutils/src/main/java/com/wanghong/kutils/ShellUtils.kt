@@ -94,4 +94,6 @@ class ShellUtils {
     }
 }
 
-data class ShellExecResult(val status: Int, val stdout: String = "", val stderr: String = "")
+data class ShellExecResult(val status: Int, val stdout: String = "", val stderr: String = "") {
+    fun successful(): Boolean = status == ShellUtils.EXEC_SUCCESS
+}
