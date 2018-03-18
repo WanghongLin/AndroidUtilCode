@@ -213,7 +213,7 @@ fun Context.getApplicationVersionName(pkgName: String = packageName): String {
     return packageManager.getPackageInfo(pkgName, 0).versionName
 }
 
-val Context.applicationVersionName by lazy(LazyThreadSafetyMode.NONE) {
+val Context.applicationVersionName: String by lazy(LazyThreadSafetyMode.NONE) {
     KUtils.application.packageManager.getPackageInfo(KUtils.application.packageName, 0).versionName
 }
 
@@ -224,7 +224,7 @@ fun Context.getApplicationVersionCode(pkgName: String = packageName): Int {
     return packageManager.getPackageInfo(pkgName, 0).versionCode
 }
 
-val Context.applicationVersionCode by lazy(LazyThreadSafetyMode.NONE) {
+val Context.applicationVersionCode: Int by lazy(LazyThreadSafetyMode.NONE) {
     KUtils.application.packageManager.getPackageInfo(KUtils.application.packageName, 0).versionCode
 }
 

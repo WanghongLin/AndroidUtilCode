@@ -15,9 +15,5 @@
   -->
 
 <resources>
-    <string name="app_name">KUtils Sample</string>
-    <string name="activity_utils">Activity Utils</string>
-    <string name="app_utils">App Utils</string>
-    <string name="title_activity_utils">ActivityUtilsActivity</string>
-    <string name="title_activity_app_utils">AppUtilsActivity</string>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>
